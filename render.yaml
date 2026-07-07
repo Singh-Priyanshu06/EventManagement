@@ -1,0 +1,13 @@
+services:
+  - type: web
+    name: eventmanagement
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URL
+        value: your_mongodb_connection_string
