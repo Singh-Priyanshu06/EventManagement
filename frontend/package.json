@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "axios": "^1.18.1",
+    "eventmanagement-root": "file:..",
     "postcss": "^8.5.16",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
