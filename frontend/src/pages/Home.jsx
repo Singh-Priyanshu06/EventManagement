@@ -7,6 +7,7 @@ const Home = () => {
     const [events, setEvents] = useState([]);
     const [search, setSearch] = useState('');
     const [loading, setLoading] = useState(true);
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         const timeoutId = setTimeout(() => {
@@ -16,15 +17,22 @@ const Home = () => {
     }, [search]);
 
     const fetchEvents = async () => {
+        setLoading(true);
+        setErrorMessage('');
         try {
-            const { data } = await api.get(`/events?search=${search}`);
+            const { data } = await api.get('/events', { params: { search } });
+            if (!Array.isArray(data)) {
+                throw new Error('The events API returned an unexpected response.');
+            }
             setEvents(data);
         } catch (error) {
-            console.error('Error fetching events:', error);
+            console.error('Error fetching events:', error.response?.data || error);
+            setEvents([]);
+            setErrorMessage('Events could not be loaded. Check the database connection and try again.');
         } finally {
             setLoading(false);
         }
-    };
+    }; 
 
     return (
         <div className="flex flex-col min-h-screen">
@@ -86,6 +94,8 @@ const Home = () => {
 
             {loading ? (
                 <div className="text-center py-20 text-xl font-semibold text-gray-600">Loading events...</div>
+            ) : errorMessage ? (
+                <div role="alert" className="text-center py-20 text-lg text-red-600">{errorMessage}</div>
             ) : events.length === 0 ? (
                 <div className="text-center py-20 text-xl text-gray-500">No events found matching your search.</div>
             ) : (

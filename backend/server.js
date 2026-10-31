@@ -9,8 +9,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-connectDB();
-
 //Routes
 app.use('/api/auth', require("./routes/auth"));
 app.use('/api/events',require('./routes/events'));
@@ -26,6 +24,16 @@ if (fs.existsSync(frontendDistPath)) {
   });
 }
 
-app.listen(PORT, () => {
-  console.log(`Server is running on ${PORT}`)
-})
+const startServer = async () => {
+  try {
+    await connectDB();
+    app.listen(PORT, () => {
+      console.log(`Server is running on ${PORT}`);
+    });
+  } catch (error) {
+    console.error(`Unable to connect to MongoDB: ${error.message}`);
+    process.exit(1);
+  }
+};
+
+startServer();
